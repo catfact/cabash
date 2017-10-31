@@ -182,7 +182,7 @@ void ui_loop(void *ca, void* metro) {
 	}
 	// if we got here, do more expensive string comparisons for fns
 	const char *kname = keyname(k);
-	if(strcmp(kname, "^H") == 0) { should_exit = 1; }
+	if(strcmp(kname, "^X") == 0) { should_exit = 1; }
     }
 
     ui_deinit();
