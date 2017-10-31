@@ -8,9 +8,12 @@ see [http://mathworld.wolfram.com/ElementaryCellularAutomaton.html] for more bac
 
 ## build
 
-`make` and run.
+linux:
+`make` and run. requires ncurses
 
-requires posix and ncurses.
+macos:
+doesn't build yet. need to work around the lack of posix clock functions. see this SO thread:
+https://stackoverflow.com/questions/21665641/ns-precision-monotonic-clock-in-c-on-linux-and-os-x
 
 ## usage
 
