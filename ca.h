@@ -12,7 +12,7 @@ typedef enum {
 } ca_bound_mode_t;
 
 /// TODO:
-/// would actually like to try symmetrical modes
+/// would actually like to try asymmetrical bound modes
 
 // allocate and initialize a CA structure
 extern void* ca_new();
