@@ -4,6 +4,8 @@ elementary cellular automata sequencer.
 
 right now, just a toy for exploring parameters of 1-dimensional binary CA, with an eye towards applications in musical sequencing. 
 
+see [http://mathworld.wolfram.com/ElementaryCellularAutomaton.html] for more background.
+
 ## build
 
 `make` and run.
