@@ -22,9 +22,9 @@ int main(void) {
 
   printf("ui_init() done (main.c) \r\n");
 
-  ca_set_rule(ca, 110);
+  ca_set_rule(ca, 90);
   ca_set_cell(ca, n/2, true);
-  ca_set_cell(ca, n/2 + 1, true);
+  //  ca_set_cell(ca, n/2 + 1, true);
 
   void* m = metro_new(&metro_bang, NULL, -1);
   metro_set_time(m, 0.0625);
