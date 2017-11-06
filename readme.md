@@ -2,7 +2,7 @@
 
 elementary cellular automata sequencer.
 
-right now, just a toy for exploring parameters of 1-dimensional binary CA, with an eye towards applications in musical sequencing.
+a toy for exploring parameters of 1-dimensional binary CA, with an eye towards applications in musical sequencing.
 
 see [http://mathworld.wolfram.com/ElementaryCellularAutomaton.html] for more background.
 
@@ -15,19 +15,22 @@ requirements:
 - posix (supporting CLOCK_MONOTONIC)
 - ncurses
 - liblo
+- liblua5.1
 
 macos:
-doesn't build yet. need to work around the lack of posix clock functions. see this SO thread:
+doesn't build yet, sorry. need to work around the lack of posix clock functions. see this SO thread:
 https://stackoverflow.com/questions/21665641/ns-precision-monotonic-clock-in-c-on-linux-and-os-x
+
+(i'd be interested to know if there is some dynamic library that provides a workaround, instead of adding mach functions to the C program.)
 
 
 ## usage
 
 `ca [config file]`
 
-run the `ca` executable and see a scrolling sequence of elementary cellular automata states.
+run the `ca` executable with and see a scrolling sequence of elementary cellular automata states.
 
-on each update, an OSC message is sent to localhost on port 57120, containing a blob of all cell values (one byte per cell.)
+on each update, `ca` sends an OSC message to the address and port specified by configuration (port 57120 on localhost by default.) message payload is a single binary blob of all cell values (one byte per cell.)
 
 ### key commands:
 
