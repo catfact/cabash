@@ -11,6 +11,7 @@
 
 #include "ca.h"
 #include "metro.h"
+#include "patterns.h"
 #include "ui.h"
 
 // call (most) ncurses functions with hard error checking
@@ -70,7 +71,9 @@ static void print_bounds(void* ca) {
   wclear(win_bounds);
   int l = ca_get_bound_l(ca);
   int r = ca_get_bound_r(ca);
-  mvwprintw(win_bounds, 0, 0, "BOUNDS: [%d, %d], MODE: %d", l, r, ca_get_bound_mode(ca));
+  mvwprintw(win_bounds, 0, 0,
+	    "BOUNDS: [%d, %d], MODES: [%d, %d]",
+	    l, r, ca_get_bound_mode_l(ca), ca_get_bound_mode_r(ca)); 
   wrefresh(win_bounds);
 }
 
@@ -91,20 +94,25 @@ static void set_cell(void* ca, int x, bool z) {
   ca_set_cell(ca, x, z);
   //  print_last_cell_row(ca);
   // FIXME:
-  // this looks funny but i think better than no feedback at all
+  // this just prints an extra row, looks funny.
+  // but i think better than no feedback at all
   ui_update(ca); 
 }
 
 // toggle the bounds mode
-static void toggle_bounds_mode(void* ca) {
-  ca_bound_mode_t m = ca_get_bound_mode(ca);
+static void toggle_bounds_mode(void* ca, int lr) {
+  ca_bound_mode_t m = lr > 0 ? ca_get_bound_mode_r(ca) : ca_get_bound_mode_r(ca);
   ca_bound_mode_t m1;
   switch(m) {
   case CA_BOUND_MODE_WRAPPED: m1 = CA_BOUND_MODE_FIXED_HIGH; break;
   case CA_BOUND_MODE_FIXED_HIGH: m1 = CA_BOUND_MODE_FIXED_LOW; break;
   case CA_BOUND_MODE_FIXED_LOW: default: m1 = CA_BOUND_MODE_WRAPPED;    
   }
-  ca_set_bound_mode(ca, m1);
+  if(lr) { 
+    ca_set_bound_mode_r(ca, m1);
+  } else {
+    ca_set_bound_mode_l(ca, m1);
+  }
 }
 
 // change the metro's speed
@@ -168,7 +176,9 @@ void ui_loop(void *ca, void* metro) {
 	case ']': inc_bound_l(ca, 1); continue; 
 	case '{': inc_bound_r(ca, -1); continue; 
 	case '}': inc_bound_r(ca, 1); continue;
-	case 'p': toggle_bounds_mode(ca); continue;
+	  // o, p: toggle l/r bounds modes
+	case 'o': toggle_bounds_mode(ca, 0); continue;
+	case 'p': toggle_bounds_mode(ca, 1); continue;
 	  // space: pause/play 
 	case ' ':	  	  
 	  if(metro_is_running(metro)) { metro_stop(metro); }
@@ -178,7 +188,18 @@ void ui_loop(void *ca, void* metro) {
 	case '-': inc_metro(metro, (1.0/60.0)); continue;
 	case '=': inc_metro(metro, (-1.0/60.0)); continue;	  
 	case '_': inc_metro(metro, (1.0/15.0)); continue;
-	case '+': inc_metro(metro, (-1.0/15.0)); continue;	        
+	case '+': inc_metro(metro, (-1.0/15.0)); continue;
+	  // z,x,c,v,b,n,m,,,.,/ : patterns!
+	case 'z': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_CLEAR); continue;
+	case 'x': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ONE); continue;
+	case 'c': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_TWO); continue;
+	case 'v': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ALT1); continue;
+	case 'b': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ALT2); continue;
+	case 'n': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ALT3); continue;
+	case 'm': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ALT12); continue;
+	case ',': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ALT123); continue;
+	case '.': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_ALT1234); continue;
+	case '/': pat_fill(ca_get_cells(ca), CA_NUM_CELLS, PAT_RAND); continue;
 	}
 	// if we got here, do more expensive string comparisons for fns
 	const char *kname = keyname(k);
@@ -211,6 +232,14 @@ void ui_init(void) {
     scrollok(win_cells, TRUE);
 }
 
+static char bound_mode_symbol(ca_bound_mode_t mode) {
+  switch(mode) {
+  case CA_BOUND_MODE_FIXED_HIGH: return '=';
+  case CA_BOUND_MODE_FIXED_LOW: return '-';
+  case CA_BOUND_MODE_WRAPPED: default: return '~';
+  }
+}  
+
 void ui_update(void *ca) {
 
   // fixme: can't seem to get these to print at top of ui_loop
@@ -223,16 +252,12 @@ void ui_update(void *ca) {
   int r = ca_get_bound_r(ca);
   
   char ch;
-  char choob;
-  ca_bound_mode_t m = ca_get_bound_mode(ca);
-  switch(m) {
-  case CA_BOUND_MODE_FIXED_HIGH: choob = '='; break;
-  case CA_BOUND_MODE_FIXED_LOW: choob = '-'; break;
-  case CA_BOUND_MODE_WRAPPED: default: choob = '~';
-  }
+  char choob_l = bound_mode_symbol(ca_get_bound_mode_l(ca));
+  char choob_r = bound_mode_symbol(ca_get_bound_mode_r(ca));
 
   for(int i=0; i<CA_NUM_CELLS; ++i) {
-    if(i < l || i > r) { ch = choob; }
+    if(i < l) { ch = choob_l; }
+    else if(i > r) { ch = choob_r; }
     else { ch = cells[i] ? 'O' : '.'; }
     wprintw(win_cells, "%c", ch);
   }

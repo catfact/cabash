@@ -2,7 +2,7 @@
 
 elementary cellular automata sequencer.
 
-right now, just a toy for exploring parameters of 1-dimensional binary CA, with an eye towards applications in musical sequencing. 
+right now, just a toy for exploring parameters of 1-dimensional binary CA, with an eye towards applications in musical sequencing.
 
 see [http://mathworld.wolfram.com/ElementaryCellularAutomaton.html] for more background.
 
@@ -10,23 +10,31 @@ see [http://mathworld.wolfram.com/ElementaryCellularAutomaton.html] for more bac
 
 `make` and run.
 
-requires posix and ncurses.
+requires :
+- posix (supporting CLOCK_MONOTONIC)
+- ncurses
+- liblo
 
 ## usage
 
 run the `ca` executable and see a scrolling sequence of elementary cellular automata states.
+
+on each update, an OSC message is sent to localhost on port 57120, containing a blob of all cell values (one byte per cell.)
 
 key commands:
 
 - `1-8`: toggle bits in the update rule
 - `[`, `]`, : move the lower boundary up and down
 - `{`, `}`, : move the upper boundary up and down
-- `p` : toggle the boundary mode (wrapping, fixed low, fixed high)
-- `-`, `=` : change the speed of the sequence
-- `_`, `+` : change the speed of the sequence more quickly
-- `space` : pause / start the sequence
+- `o` : toggle left boundary mode (wrapping, fixed low, fixed high)
+- `p` : toggle right boundary mode (wrapping, fixed low, fixed high)
+- `-`, `=` : change update speed
+- `_`, `+` : change update speed more quickly
+- `space` : toggle pause
 - `q, w, e, r, t, y, u, i` - set the middle 8 cells on (*)
 - `a, s, d, f, g, h, j, k` - set the middle 8 cells off (*)
+- `z, x, c, v, b, n, m, ,, .` - set state to various patterns (z=clear, x=single)
+- `/` - randomize state (uniform, std::rand)
 - `CTRL-X` : quit immediately
 
 
@@ -35,8 +43,6 @@ key commands:
 ## TODO:
 
 - save and recall state
-- add OSC bindings to make this into a usable computer music thing
 - add libmonome bindings to use with grids
-- try asymmetrical boundary modes
 
 pull requests are welcome!

@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include "ca.h"
 
-
-
 struct ca_state {
   // doing this the big, easy way
   // replace this with bit operations on uint32 array
@@ -11,9 +9,9 @@ struct ca_state {
   int bound_l;
   int bound_r;
   int offset;
-  ca_bound_mode_t bound_mode;
+  ca_bound_mode_t bound_mode_l;  
+  ca_bound_mode_t bound_mode_r;
 };
-
 
 //------------------------
 //--- static functions
@@ -25,7 +23,7 @@ static uint8_t get_neighbor_code(struct ca_state *ca, int idx) {
 
   //--- left neighbor
   if(idx <= ca->bound_l) {    
-    switch(ca->bound_mode) {
+    switch(ca->bound_mode_l) {
     case CA_BOUND_MODE_WRAPPED :
       if(ca->cell[ca->bound_r]) {
 	code |= 0b100;
@@ -46,7 +44,7 @@ static uint8_t get_neighbor_code(struct ca_state *ca, int idx) {
   
   //--- right neighbor
   if (idx >= ca->bound_r) {
-    switch(ca->bound_mode) {
+    switch(ca->bound_mode_r) {
     case CA_BOUND_MODE_WRAPPED :
       if(ca->cell[ca->bound_l]) {
 	code |= 0b001;
@@ -131,9 +129,15 @@ int ca_set_bound_r(void *p, int idx) {
   return ca->bound_r;
 }
 
-int ca_set_bound_mode(void *p, ca_bound_mode_t mode) {
+int ca_set_bound_mode_l(void *p, ca_bound_mode_t mode) {
   struct ca_state *ca = (struct ca_state*)p;
-  ca->bound_mode = mode;
+  ca->bound_mode_l = mode;
+  return mode;
+}
+
+int ca_set_bound_mode_r(void *p, ca_bound_mode_t mode) {
+  struct ca_state *ca = (struct ca_state*)p;
+  ca->bound_mode_r = mode;
   return mode;
 }
 
@@ -147,15 +151,10 @@ void ca_set_rule (void *p, uint8_t val) {
     ca->rule = val;
 }
 
-/* int ca_get_num_cells() { */
-/*   return CA_NUM_CELLS; */
-/* } */
-
 bool* ca_get_cells(void* p) {
   struct ca_state *ca = (struct ca_state*)p;
   return ca->cell;
 }
-
 
 uint8_t ca_get_rule (void* ca) {
   return ((struct ca_state*)ca)->rule;
@@ -169,6 +168,9 @@ int ca_get_bound_r(void *ca) {
   return ((struct ca_state*)ca)->bound_r;
 }
 
-int ca_get_bound_mode(void *ca) { 
-  return ((struct ca_state*)ca)->bound_mode;
+int ca_get_bound_mode_l(void *ca) { 
+  return ((struct ca_state*)ca)->bound_mode_l;
+}
+int ca_get_bound_mode_r(void *ca) { 
+  return ((struct ca_state*)ca)->bound_mode_r;
 }
