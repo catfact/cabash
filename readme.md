@@ -23,11 +23,13 @@ https://stackoverflow.com/questions/21665641/ns-precision-monotonic-clock-in-c-o
 
 ## usage
 
+`ca [config file]`
+
 run the `ca` executable and see a scrolling sequence of elementary cellular automata states.
 
 on each update, an OSC message is sent to localhost on port 57120, containing a blob of all cell values (one byte per cell.)
 
-key commands:
+### key commands:
 
 - `1-8`: toggle bits in the update rule
 - `[`, `]`, : move the lower boundary up and down
@@ -46,9 +48,14 @@ key commands:
 
 (*) NB: setting a cell value causes an extra row to be drawn. (ncurses is a pain sometimes.)
 
+### configuration
+
+some settings can be stored and loaded in configuration files (actually lua scripts.) see `conf.lua` for a basic example of all recognized fields. the global `conf` table is mandatory. any other lua code will also be executed.
+
+to use a configuration file, enter its name as the first argument to `ca`. 
+
+
+
 ## TODO:
 
-- save and recall state
 - add libmonome bindings to use with grids
-
-pull requests are welcome!

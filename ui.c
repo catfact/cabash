@@ -101,14 +101,14 @@ static void set_cell(void* ca, int x, bool z) {
 
 // toggle the bounds mode
 static void toggle_bounds_mode(void* ca, int lr) {
-  ca_bound_mode_t m = lr > 0 ? ca_get_bound_mode_r(ca) : ca_get_bound_mode_r(ca);
+  ca_bound_mode_t m = lr > 0 ? ca_get_bound_mode_r(ca) : ca_get_bound_mode_l(ca);
   ca_bound_mode_t m1;
   switch(m) {
   case CA_BOUND_MODE_WRAPPED: m1 = CA_BOUND_MODE_FIXED_HIGH; break;
   case CA_BOUND_MODE_FIXED_HIGH: m1 = CA_BOUND_MODE_FIXED_LOW; break;
   case CA_BOUND_MODE_FIXED_LOW: default: m1 = CA_BOUND_MODE_WRAPPED;    
   }
-  if(lr) { 
+  if(lr > 0) { 
     ca_set_bound_mode_r(ca, m1);
   } else {
     ca_set_bound_mode_l(ca, m1);
