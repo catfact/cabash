@@ -3,7 +3,7 @@ CFLAGS = -std=gnu11
 CFLAGS += -Wall -Wextra
 # CFLAGS += -Werror
 CFLAGS += -g
-LIBS = -lncurses -lpanel -lpthread -llo -llua
+LIBS = -lncurses -lpanel -lpthread -llo
 
 SRC = ca.c main.c metro.c ui.c patterns.c
 

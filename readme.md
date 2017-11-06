@@ -8,12 +8,18 @@ see [http://mathworld.wolfram.com/ElementaryCellularAutomaton.html] for more bac
 
 ## build
 
-`make` and run.
+just `make` and run.
 
-requires :
+requirements:
+
 - posix (supporting CLOCK_MONOTONIC)
 - ncurses
 - liblo
+
+macos:
+doesn't build yet. need to work around the lack of posix clock functions. see this SO thread:
+https://stackoverflow.com/questions/21665641/ns-precision-monotonic-clock-in-c-on-linux-and-os-x
+
 
 ## usage
 
