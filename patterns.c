@@ -28,7 +28,7 @@ void pat_fill(bool *p, const int n, pat_t pat) {
     for(int i=0; i<n; ++i) { p[i] = (i%3 == 0); }
     break;
   case PAT_ALT3:
-    for(int i=0; i<n; ++i) { p[i] = (i%1 == 0); }
+    for(int i=0; i<n; ++i) { p[i] = (i%4 == 0); }
     break;
   case PAT_ALT12:
     for(int i=0; i<n; ++i) {
